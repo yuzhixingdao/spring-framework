@@ -138,6 +138,14 @@ public abstract class AnnotationConfigUtils {
 	}
 
 	/**
+	 *
+	 * 创建内部bd，如下5个
+	 * 1、org.springframework.context.annotation.internalConfigurationAnnotationProcessor	>>	ConfigurationClassPostProcessor
+	 * 2、org.springframework.context.annotation.internalAutowiredAnnotationProcessor		>>	AutowiredAnnotationBeanPostProcessor
+	 * 3、org.springframework.context.annotation.internalCommonAnnotationProcessor			>>	CommonAnnotationBeanPostProcessor
+	 * 4、org.springframework.context.event.internalEventListenerProcessor					>>	EventListenerMethodProcessor
+	 * 5、org.springframework.context.event.internalEventListenerFactory					>>	DefaultEventListenerFactory
+	 *
 	 * Register all relevant annotation post processors in the given registry.
 	 * @param registry the registry to operate on
 	 * @param source the configuration source element (already extracted)
@@ -150,9 +158,11 @@ public abstract class AnnotationConfigUtils {
 
 		DefaultListableBeanFactory beanFactory = unwrapDefaultListableBeanFactory(registry);
 		if (beanFactory != null) {
+			// 排序
 			if (!(beanFactory.getDependencyComparator() instanceof AnnotationAwareOrderComparator)) {
 				beanFactory.setDependencyComparator(AnnotationAwareOrderComparator.INSTANCE);
 			}
+			// 上下文注释自动装配候选解析器
 			if (!(beanFactory.getAutowireCandidateResolver() instanceof ContextAnnotationAutowireCandidateResolver)) {
 				beanFactory.setAutowireCandidateResolver(new ContextAnnotationAutowireCandidateResolver());
 			}

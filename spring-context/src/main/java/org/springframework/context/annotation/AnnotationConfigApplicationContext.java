@@ -52,17 +52,33 @@ import org.springframework.util.Assert;
  */
 public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
 
+	// bd读取器
 	private final AnnotatedBeanDefinitionReader reader;
 
+	// bd扫描器
 	private final ClassPathBeanDefinitionScanner scanner;
 
 
 	/**
+	 * 1、实例化一个AnnotatedBeanDefinitionReader bd读取器
+	 * 2、实例化一个ClassPathBeanDefinitionScanner，能够扫描我们的bd,能够扫描一个类，并且转换成bd
+	 *
 	 * Create a new AnnotationConfigApplicationContext that needs to be populated
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
+		/**
+		 * 1.创建一个bd读取器
+		 * 2.委托AnnotationConfigUtils工具类，向容器中注册内部bd（向beanDefinitionMap中添加内部bd）
+		 * 		2.1、org.springframework.context.annotation.internalConfigurationAnnotationProcessor	>>	ConfigurationClassPostProcessor
+		 * 		2.2、org.springframework.context.annotation.internalAutowiredAnnotationProcessor		>>	AutowiredAnnotationBeanPostProcessor
+		 * 		2.3、org.springframework.context.annotation.internalCommonAnnotationProcessor			>>	CommonAnnotationBeanPostProcessor
+		 * 		2.4、org.springframework.context.event.internalEventListenerProcessor					>>	EventListenerMethodProcessor
+		 * 		2.5、org.springframework.context.event.internalEventListenerFactory						>>	DefaultEventListenerFactory
+ 		 */
 		this.reader = new AnnotatedBeanDefinitionReader(this);
+
+		// 创建一个bd扫描器
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
@@ -84,6 +100,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... annotatedClasses) {
 		this();
+		// 一般注册@Configuration的类；也可以注册非@Configuration的类
 		register(annotatedClasses);
 		refresh();
 	}

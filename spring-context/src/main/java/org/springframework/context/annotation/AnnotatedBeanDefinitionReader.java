@@ -84,6 +84,17 @@ public class AnnotatedBeanDefinitionReader {
 		Assert.notNull(environment, "Environment must not be null");
 		this.registry = registry;
 		this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
+
+		/**
+		 *
+		 * 委托AnnotationConfigUtils工具类，向容器中注册内部bd（向beanDefinitionMap中添加内部bd）
+		 *
+		 * 1、org.springframework.context.annotation.internalConfigurationAnnotationProcessor	>>	ConfigurationClassPostProcessor
+		 * 2、org.springframework.context.annotation.internalAutowiredAnnotationProcessor		>>	AutowiredAnnotationBeanPostProcessor
+		 * 3、org.springframework.context.annotation.internalCommonAnnotationProcessor			>>	CommonAnnotationBeanPostProcessor
+		 * 4、org.springframework.context.event.internalEventListenerProcessor					>>	EventListenerMethodProcessor
+		 * 5、org.springframework.context.event.internalEventListenerFactory					>>	DefaultEventListenerFactory
+ 		 */
 		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
 	}
 
@@ -249,7 +260,10 @@ public class AnnotatedBeanDefinitionReader {
 			@Nullable Class<? extends Annotation>[] qualifiers, @Nullable Supplier<T> supplier,
 			@Nullable BeanDefinitionCustomizer[] customizers) {
 
+		// 实例化bd
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(annotatedClass);
+
+		// 判断是否跳过
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
@@ -259,6 +273,7 @@ public class AnnotatedBeanDefinitionReader {
 		abd.setScope(scopeMetadata.getScopeName());
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
 
+		// 设置注解的通用配置（设注解的置默认配置）
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
@@ -281,6 +296,8 @@ public class AnnotatedBeanDefinitionReader {
 
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+
+		// 向容器中注册bd
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}
 
