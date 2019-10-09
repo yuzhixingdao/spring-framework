@@ -523,34 +523,43 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			// 准备bean工厂
-			// 1、添加一个类加载器
-			// 2、添加bean表达式解释器，为了能够让我们的beanFactory去解析bean表达式
-			// 3、添加一个后置处理器ApplicationContextAwareProcessor
-			// 4、添加了自动注入被忽略的列表
-			// 5、添加了一个ApplicationListenerDetector后置处理器等等
+			/**
+			 * 准备bean工厂
+			 * 	1、添加一个类加载器
+			 * 	2、添加bean表达式解释器，为了能够让我们的beanFactory去解析bean表达式
+			 * 	3、添加一个后置处理器ApplicationContextAwareProcessor
+			 * 	4、添加了自动注入被忽略的列表
+			 * 	5、添加了一个ApplicationListenerDetector后置处理器等等
+			 */
 			prepareBeanFactory(beanFactory);
 
 			try {
-				// Allows post-processing of the bean factory in context subclasses.
 				// TODO 空实现
-				// 在应用程序上下文的标准初始化之后修改其内部bean工厂。
-				// 所有bean定义都已加载，但还没有实例化bean。
-				// 此时允许在特定的ApplicationContext实现中注册特殊的beanPostProcessor等。
+				// Allows post-processing of the bean factory in context subclasses.
+				/**
+				 * 在应用程序上下文的标准初始化之后修改其内部bean工厂。
+				 * 所有bean定义都已加载，但还没有实例化bean。
+				 * 此时允许在特定的ApplicationContext实现中注册特殊的beanPostProcessor等。
+				 */
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				/**
+				 * 执行BeanFactoryPostProcessor实现类，核心执行ConfigurationClassPostProcessor类
+				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				// 国际化语言的支持（不重要）
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
 				initApplicationEventMulticaster();
 
+				// TODO 空实现
 				// Initialize other special beans in specific context subclasses.
 				onRefresh();
 

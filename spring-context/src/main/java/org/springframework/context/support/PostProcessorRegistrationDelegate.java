@@ -104,7 +104,8 @@ final class PostProcessorRegistrationDelegate {
 			 *
 			 * 核心功能：
 			 * 	1、遍历解析@Configuration修饰的类
-			 * 	2、
+			 * 	2、扫描（@Component、@PropertySources、@ComponentScans、@ImportResource）
+			 * 	3、3种import扫描
 			 */
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 
