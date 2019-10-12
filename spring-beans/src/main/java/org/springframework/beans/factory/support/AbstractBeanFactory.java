@@ -242,6 +242,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
 			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
 
+		/**
+		 * 转换名称，主要是对FactoryBean的转换：
+		 * FactoryBean: &beanName -> beanName
+		 */
 		final String beanName = transformedBeanName(name);
 		Object bean;
 
@@ -317,9 +321,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 
 				// Create bean instance.
+				/**
+				 * 创建一个单例实例
+				 */
 				if (mbd.isSingleton()) {
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
+							// 创建单例的具体实现
 							return createBean(beanName, mbd, args);
 						}
 						catch (BeansException ex) {
